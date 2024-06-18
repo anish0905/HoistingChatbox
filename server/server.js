@@ -18,7 +18,7 @@ const managerRoute = require("./src/routes/managerRoutes.js");
 const locationRoutes = require("./src/routes/locationRoute.js");
 const employeeRoute = require("./src/routes/employeeRegRoutes.js");
 const notificationRouter = require("./src/routes/notificationRoutes.js");
-connectDb(); // Call the function to connect to the database
+connectDb(); // Call the function to connect to the databaseeeeeeeeeeee
 
 const app = express();
 
