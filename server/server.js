@@ -391,6 +391,10 @@ app.use("/api/manager", managerRoute);
 app.use("/api/location", locationRoutes);
 app.use("/api/employee", employeeRoute);
 
+app.get("/", (req, res) => {
+  res.send("Hello");
+});
+
 // Use auth routes
 app.use("/api/authuser", authUserRoutes);
 // Start the server
