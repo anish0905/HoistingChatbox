@@ -390,6 +390,10 @@ app.use("/api/manager", managerRoute);
 app.use("/api/location", locationRoutes);
 app.use("/api/employee", employeeRoute);
 
+app.get('/', (req, res) => {
+  res.send('Hello');
+});
+
 // Start the server
 app.listen(port, () => {
   console.log(`Server running on port no ${port}`);
