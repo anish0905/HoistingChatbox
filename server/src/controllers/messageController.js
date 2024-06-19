@@ -83,18 +83,16 @@ const createMessage = async (req, res) => {
       content,
     });
 
-
     await message.save();
-    
 
     const notification = new Notification({
       sender,
       recipient,
       content,
     });
-    
-   const result =await notification.save();
-  //  console.log(result);
+
+    const result = await notification.save();
+    //  console.log(result);
     res.status(201).json({ message: "Message sent", data: message });
   } catch (error) {
     console.error("Error creating message:", error);
@@ -174,20 +172,6 @@ const markMessagesRead = async (req, res) => {
   }
 };
 
-// const getNotificationId = async (req, res) => {
-//   try {
-//     const lastMessage = await Message.findOne().sort({ createdAt: -1 }).exec();
-
-//     if (!lastMessage) {
-//       return res.status(404).json({ message: "No message found" });
-//     }
-
-//     res.status(200).json(lastMessage);
-//   } catch (error) {
-//     res.status(400).json({ message: error.message });
-//   }
-// };
-// chek anothe logic
 // Fetch the latest message and delete it after 10 seconds
 const getNotificationId = async (req, res) => {
   try {
@@ -221,39 +205,59 @@ const getNotificationId = async (req, res) => {
   }
 };
 
-//check second another logically
+// Forward a message
+const forwardMessage = async (req, res) => {
+  try {
+    const { messageId, newRecipient } = req.body;
+    const originalMessage = await Message.findById(messageId);
 
-// const getNotificationId = async (req, res) => {
-//   try {
-//     // Find the latest message
-//     const lastMessage = await Message.findOne().sort({ createdAt: -1 }).exec();
+    if (!originalMessage) {
+      return res.status(404).json({ error: "Message not found" });
+    }
 
-//     if (!lastMessage) {
-//       return res.status(404).json({ message: "No message found" });
-//     }
+    const forwardedMessage = new Message({
+      sender: originalMessage.sender,
+      recipient: newRecipient,
+      content: originalMessage.content,
+    });
 
-//     // Send the message to the client
-//     res.status(200).json(lastMessage);
+    await forwardedMessage.save();
+    res.status(201).json(forwardedMessage);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
-//     // Simulate the deletion by logging or not deleting from MongoDB
-//     setTimeout(() => {
-//       console.log(
-//         `Message with ID ${lastMessage._id} should be deleted after 10 seconds`
-//       );
-//       // Here, you are just simulating deletion and not actually deleting the document
-//       // The following commented code shows the actual deletion code which should be avoided
-//       // await Message.findByIdAndDelete(lastMessage._id);
-//     }, 10000); // 10000 milliseconds = 10 seconds
-//   } catch (error) {
-//     console.error("Error fetching the latest message:", error);
-//     res.status(500).json({ message: "Internal server error" });
-//   }
-// };
+// Reply to a message
+const replyToMessage = async (req, res) => {
+  try {
+    const { parentMessageId, sender, recipient, content } = req.body;
+    const parentMessage = await Message.findById(parentMessageId);
+
+    if (!parentMessage) {
+      return res.status(404).json({ error: "Parent message not found" });
+    }
+
+    const replyMessage = new Message({
+      sender,
+      recipient,
+      content,
+      parentMessage: parentMessageId,
+    });
+
+    await replyMessage.save();
+    res.status(201).json(replyMessage);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 module.exports = {
   createMessage,
+  forwardMessage,
   getMessages,
   deleteMessage,
   unreadMessages,
   markMessagesRead,
   getNotificationId,
+  replyToMessage,
 };

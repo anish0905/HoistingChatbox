@@ -18,6 +18,7 @@ const managerRoute = require("./src/routes/managerRoutes.js");
 const locationRoutes = require("./src/routes/locationRoute.js");
 const employeeRoute = require("./src/routes/employeeRegRoutes.js");
 const notificationRouter = require("./src/routes/notificationRoutes.js");
+const authUserRoutes = require("./src/routes/authUserRoutes.js");
 connectDb(); // Call the function to connect to the databaseeeeeeeeeeee
 
 const app = express();
@@ -390,6 +391,8 @@ app.use("/api/manager", managerRoute);
 app.use("/api/location", locationRoutes);
 app.use("/api/employee", employeeRoute);
 
+// Use auth routes
+app.use("/api/authuser", authUserRoutes);
 // Start the server
 app.listen(port, () => {
   console.log(`Server running on port no ${port}`);
